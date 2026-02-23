@@ -1,9 +1,9 @@
 # Prompt Agent Template
 ### Built with Google ADK · A2A Protocol · Python
 
-A production-ready starting point for building **external agents that connect to [Promptopenia](https://promptopenia.com)** — the multi-agent platform for healthcare and enterprise workflows.
+A production-ready starting point for building **external agents that connect to [Prompt Opinion](https://promptopinion.ai)** — the multi-agent platform for healthcare and enterprise workflows.
 
-Clone this template, replace the example tools with your own, and you have a fully authenticated, observable agent that Promptopenia can discover and call.
+Clone this template, replace the example tools with your own, and you have a fully authenticated, observable agent that Prompt Opinion can discover and call.
 
 ---
 
@@ -39,9 +39,9 @@ Clone this template, replace the example tools with your own, and you have a ful
     - [Error responses](#error-responses)
   - [Testing locally](#testing-locally)
     - [Test cases covered](#test-cases-covered)
-  - [Connecting to Promptopenia](#connecting-to-promptopenia)
+  - [Connecting to Prompt Opinion](#connecting-to-prompt-opinion)
     - [Registration steps](#registration-steps)
-    - [What Promptopenia provides](#what-promptopenia-provides)
+    - [What Prompt Opinion provides](#what-prompt-opinion-provides)
   - [License](#license)
 
 ---
@@ -53,7 +53,7 @@ Clone this template, replace the example tools with your own, and you have a ful
 | **Agent framework** | [Google ADK](https://google.github.io/adk-docs/) with Gemini 2.0 Flash |
 | **Transport protocol** | [A2A](https://google.github.io/A2A/) (Agent-to-Agent) over JSON-RPC / HTTP |
 | **Security** | `X-API-Key` middleware — every request is authenticated |
-| **FHIR integration** | Optional — FHIR credentials flow from Promptopenia into tool calls without touching the prompt |
+| **FHIR integration** | Optional — FHIR credentials flow from Prompt Opinion into tool calls without touching the prompt |
 | **Structured logging** | ANSI-colour logs with request payloads, security events, and FHIR fingerprints |
 | **Agent card** | Published at `/.well-known/agent-card.json` for automatic discovery |
 | **Example tools** | Four FHIR R4 query tools (demographics, medications, conditions, observations) |
@@ -65,7 +65,7 @@ Clone this template, replace the example tools with your own, and you have a ful
 ## How it works
 
 ```
-Promptopenia                    Your agent (this template)
+Prompt Opinion                    Your agent (this template)
 ────────────                    ──────────────────────────
   │                                       │
   │  POST /                               │
@@ -245,11 +245,11 @@ agent_card = AgentCard(
 
 ### Scenario B — FHIR-connected healthcare agent
 
-This is the default configuration of the template. Promptopenia passes FHIR credentials (server URL, bearer token, patient ID) in the A2A message metadata. The `extract_fhir_context` callback intercepts them before the model is called, and your tools read them from `tool_context.state`.
+This is the default configuration of the template. Prompt Opinion passes FHIR credentials (server URL, bearer token, patient ID) in the A2A message metadata. The `extract_fhir_context` callback intercepts them before the model is called, and your tools read them from `tool_context.state`.
 
-No changes needed to run the FHIR scenario — it works out of the box. To point it at a real FHIR server, your Promptopenia configuration must send the correct metadata (see [FHIR context](#fhir-context-optional)).
+No changes needed to run the FHIR scenario — it works out of the box. To point it at a real FHIR server, your Prompt Opinion configuration must send the correct metadata (see [FHIR context](#fhir-context-optional)).
 
-**Promptopenia will send credentials like this:**
+**Prompt Opinion will send credentials like this:**
 
 ```json
 {
@@ -383,7 +383,7 @@ The FHIR context is keyed by the URI declared in your agent card's extension lis
 http://localhost:5139/schemas/a2a/v1/fhir-context
 ```
 
-Update this URI in `app.py` (`AgentExtension.uri`) to match your Promptopenia workspace URL before deploying.
+Update this URI in `app.py` (`AgentExtension.uri`) to match your Prompt Opinion workspace URL before deploying.
 
 ### What if FHIR context is not sent?
 
@@ -487,9 +487,9 @@ To test against a real FHIR server, update the `fhirUrl`, `fhirToken`, and `pati
 
 ---
 
-## Connecting to Promptopenia
+## Connecting to Prompt Opinion
 
-[Promptopenia](https://promptopenia.com) is a multi-agent platform that orchestrates agents like this one — routing conversations, passing patient context, and composing results across multiple specialised agents.
+[Prompt Opinion](https://promptopinion.ai) is a multi-agent platform that orchestrates agents like this one — routing conversations, passing patient context, and composing results across multiple specialised agents.
 
 ### Registration steps
 
@@ -504,23 +504,23 @@ To test against a real FHIR server, update the `fhirUrl`, `fhirToken`, and `pati
    )
    ```
 
-3. **Update the FHIR extension URI** in `app.py` to match your Promptopenia workspace:
+3. **Update the FHIR extension URI** in `app.py` to match your Prompt Opinion workspace:
    ```python
    AgentExtension(
-       uri="https://your-promptopenia-workspace.example.com/schemas/a2a/v1/fhir-context",
+       uri="https://your-promptopinion-workspace.example.com/schemas/a2a/v1/fhir-context",
        ...
    )
    ```
 
-4. **Register the agent in Promptopenia** by providing:
+4. **Register the agent in Prompt Opinion** by providing:
    - Your agent card URL: `https://my-agent.example.com/.well-known/agent-card.json`
-   - Your `X-API-Key` value (Promptopenia will send this on every request)
+   - Your `X-API-Key` value (Prompt Opinion will send this on every request)
 
-5. **Promptopenia discovers your agent** by fetching the agent card, learns that an API key is required, and begins routing requests to it.
+5. **Prompt Opinion discovers your agent** by fetching the agent card, learns that an API key is required, and begins routing requests to it.
 
-### What Promptopenia provides
+### What Prompt Opinion provides
 
-When your agent is called from Promptopenia, the platform automatically injects context into the A2A message metadata:
+When your agent is called from Prompt Opinion, the platform automatically injects context into the A2A message metadata:
 
 - The patient's **FHIR server URL** for your workspace
 - A **short-lived bearer token** scoped to the current user session
@@ -536,4 +536,4 @@ MIT
 
 ---
 
-*Built on [Google ADK](https://google.github.io/adk-docs/) and the [A2A protocol](https://google.github.io/A2A/). Designed for the [Promptopenia](https://promptopenia.com) multi-agent platform.*
+*Built on [Google ADK](https://google.github.io/adk-docs/) and the [A2A protocol](https://google.github.io/A2A/). Designed for the [Prompt Opinion](https://promptopinion.ai) multi-agent platform.*
