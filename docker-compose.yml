@@ -53,3 +53,11 @@ services:
       PORT: "8003"
     ports:
       - "8003:8003"
+
+  cardiovascular:
+    <<: *agent-defaults
+    environment:
+      AGENT_MODULE: cardiovascular_agent.app:a2a_app
+      PORT: "8004"
+    ports:
+      - "8004:8004"
