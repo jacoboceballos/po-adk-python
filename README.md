@@ -151,7 +151,7 @@ All three agents start in a single terminal with colour-coded logs — `healthca
 
 ```bash
 # Terminal 1 — FHIR healthcare agent
-uvicorn healthcare_agent.app:a2a_app --host 0.0.0.0 --port 8001
+uvicorn cardiovascular_agent.app:a2a_app --host 0.0.0.0 --port 8004
 
 # Terminal 2 — General-purpose agent
 uvicorn general_agent.app:a2a_app --host 0.0.0.0 --port 8002

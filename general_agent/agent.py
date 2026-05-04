@@ -17,7 +17,7 @@ from .tools import get_current_datetime, look_up_icd10
 
 root_agent = Agent(
     name="general_agent",
-    model="gemini-2.5-flash",
+    model="gemini-3.1-flash-lite-preview",
     description=(
         "A general-purpose clinical assistant for date/time queries "
         "and ICD-10-CM code lookups. Does not require patient context."

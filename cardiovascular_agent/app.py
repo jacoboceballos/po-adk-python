@@ -1,11 +1,11 @@
 """
-orchestrator — A2A application entry point.
+cardiovascular_agent — A2A application entry point.
 
 Start the server with:
-    uvicorn orchestrator.app:a2a_app --host 0.0.0.0 --port 8003
+    uvicorn cardiovascular_agent.app:a2a_app --host 0.0.0.0 --port 8004
 
 The agent card is served publicly at:
-    GET http://localhost:8003/.well-known/agent-card.json
+    GET http://localhost:8004/.well-known/agent-card.json
 
 All other endpoints require an X-API-Key header (see shared/middleware.py).
 """
@@ -18,37 +18,44 @@ from .agent import root_agent
 
 a2a_app = create_a2a_app(
     agent=root_agent,
-    name="orchestrator",
+    name="cardiovascular_risk_agent",
     description=(
-        "A clinical orchestrator that routes questions to specialist sub-agents: "
-        "healthcare_fhir_agent for patient record queries, "
-        "cardiovascular_risk_agent for ASCVD risk assessment, and "
-        "general_agent for date/time and ICD-10 lookups."
+        "A cardiovascular risk assessment assistant that computes 10-year ASCVD risk "
+        "using the ACC/AHA Pooled Cohort Equations. Can pull patient data from a FHIR "
+        "server automatically or accept manual inputs for what-if scenarios."
     ),
-    url=os.getenv("ORCHESTRATOR_URL", os.getenv("BASE_URL", "http://localhost:8003")),
-    port=8003,
-    # The orchestrator supports FHIR context so it can pass credentials through
-    # to the healthcare and cardiovascular sub-agents.
-    fhir_extension_uri=f"{os.getenv('PO_PLATFORM_BASE_URL', 'http://localhost:5139')}/schemas/a2a/v1/fhir-context",
+    url=os.getenv("CARDIOVASCULAR_AGENT_URL", os.getenv("BASE_URL", "http://localhost:8004")),
+    port=8004,
+    # FHIR context is declared but not strictly required — the agent can also
+    # run manual what-if calculations without a connected FHIR server.
+    # Set PO_PLATFORM_BASE_URL=https://app.promptopinion.ai in your .env
+    fhir_extension_uri=(
+        f"{os.getenv('PO_PLATFORM_BASE_URL', 'https://app.promptopinion.ai')}"
+        f"/schemas/a2a/v1/fhir-context"
+    ),
+    require_api_key=True,
     skills=[
         AgentSkill(
-            id="clinical-orchestration",
-            name="clinical-orchestration",
+            id="ascvd-risk-assessment",
+            name="ascvd-risk-assessment",
             description=(
-                "Routes questions to specialist agents (demographics, medications, "
-                "vitals, ASCVD risk, ICD-10, date/time) to answer clinical queries."
+                "Computes the 10-year atherosclerotic cardiovascular disease (ASCVD) risk "
+                "using the 2013 ACC/AHA Pooled Cohort Equations. Automatically pulls inputs "
+                "from the patient's FHIR record (age, sex, race, cholesterol, BP, diabetes, "
+                "smoking status, medications) and returns a risk percentage with ACC/AHA "
+                "guideline-based statin and lifestyle recommendations."
             ),
-            tags=["clinical", "orchestrator", "routing"],
+            tags=["cardiovascular", "ascvd", "risk", "fhir"],
         ),
         AgentSkill(
-            id="cardiovascular-risk",
-            name="cardiovascular-risk",
+            id="ascvd-risk-manual",
+            name="ascvd-risk-manual",
             description=(
-                "Routes cardiovascular risk assessment queries to the ASCVD risk "
-                "agent, which computes 10-year risk using the Pooled Cohort Equations "
-                "and returns ACC/AHA guideline recommendations."
+                "Calculates 10-year ASCVD risk from explicitly provided clinical values. "
+                "Use for what-if scenarios (e.g. 'What if we lower BP to 130?', "
+                "'What if the patient quits smoking?') or when FHIR context is unavailable."
             ),
-            tags=["cardiovascular", "ascvd", "risk", "routing"],
+            tags=["cardiovascular", "ascvd", "risk", "what-if"],
         ),
     ],
 )

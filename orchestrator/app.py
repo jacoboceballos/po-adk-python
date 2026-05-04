@@ -22,19 +22,38 @@ a2a_app = create_a2a_app(
     description=(
         "A clinical orchestrator that routes questions to specialist sub-agents: "
         "healthcare_fhir_agent for patient record queries, "
+        "cardiovascular_risk_agent for ASCVD risk assessment, and "
         "general_agent for date/time and ICD-10 lookups."
     ),
     url=os.getenv("ORCHESTRATOR_URL", os.getenv("BASE_URL", "http://localhost:8003")),
     port=8003,
     # The orchestrator supports FHIR context so it can pass credentials through
-    # to the healthcare sub-agent.
-    fhir_extension_uri=f"{os.getenv('PO_PLATFORM_BASE_URL', 'http://localhost:5139')}/schemas/a2a/v1/fhir-context",
+    # to the healthcare and cardiovascular sub-agents.
+    # Set PO_PLATFORM_BASE_URL=https://app.promptopinion.ai in your .env
+    fhir_extension_uri=(
+        f"{os.getenv('PO_PLATFORM_BASE_URL', 'https://app.promptopinion.ai')}"
+        f"/schemas/a2a/v1/fhir-context"
+    ),
+    require_api_key=True,
     skills=[
         AgentSkill(
             id="clinical-orchestration",
             name="clinical-orchestration",
-            description="Routes questions to specialist agents (demographics, medications, vitals, ICD-10, date/time) to answer clinical queries.",
+            description=(
+                "Routes questions to specialist agents (demographics, medications, "
+                "vitals, ASCVD risk, ICD-10, date/time) to answer clinical queries."
+            ),
             tags=["clinical", "orchestrator", "routing"],
+        ),
+        AgentSkill(
+            id="cardiovascular-risk",
+            name="cardiovascular-risk",
+            description=(
+                "Routes cardiovascular risk assessment queries to the ASCVD risk "
+                "agent, which computes 10-year risk using the Pooled Cohort Equations "
+                "and returns ACC/AHA guideline recommendations."
+            ),
+            tags=["cardiovascular", "ascvd", "risk", "routing"],
         ),
     ],
 )

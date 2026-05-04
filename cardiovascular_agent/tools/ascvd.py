@@ -23,7 +23,7 @@ _FHIR_TIMEOUT = 15  # seconds
 # ═══════════════════════════════════════════════════════════════════════════════
 # Pooled Cohort Equations — coefficient tables
 # ═══════════════════════════════════════════════════════════════════════════════
-# Keys: (race_group, sex)   race_group ∈ {"white", "aa"}   sex ∈ {"male", "female"}
+# Keys: (race_group, sex)   race_group in {"white", "aa"}   sex in {"male", "female"}
 
 _PCE_COEFFICIENTS = {
     ("white", "female"): {
@@ -189,19 +189,34 @@ def _compute_pce(
         additional = "Reassess risk in 4-6 years, or sooner if risk factors change."
     elif risk_pct < 7.5:
         category = "Borderline"
-        statin_rec = "Statin therapy may be considered if risk-enhancing factors are present (family history of premature ASCVD, metabolic syndrome, CKD, inflammatory conditions, elevated Lp(a), apoB, or hsCRP)."
+        statin_rec = (
+            "Statin therapy may be considered if risk-enhancing factors are present "
+            "(family history of premature ASCVD, metabolic syndrome, CKD, inflammatory "
+            "conditions, elevated Lp(a), apoB, or hsCRP)."
+        )
         lifestyle_rec = "Lifestyle modifications are the primary intervention."
         additional = "Discuss risk-enhancing factors. Coronary artery calcium (CAC) scoring can help refine the decision."
     elif risk_pct < 20.0:
         category = "Intermediate"
         statin_rec = "Moderate-intensity statin therapy is recommended to reduce LDL-C by 30-49%."
         lifestyle_rec = "Lifestyle modifications are essential alongside pharmacotherapy."
-        additional = "If decision is uncertain, consider CAC scoring: CAC = 0 favours deferring statin (except in diabetics and smokers); CAC >= 100 or >= 75th percentile supports statin therapy."
+        additional = (
+            "If decision is uncertain, consider CAC scoring: CAC = 0 favours deferring "
+            "statin (except in diabetics and smokers); CAC >= 100 or >= 75th percentile "
+            "supports statin therapy."
+        )
     else:
         category = "High"
-        statin_rec = "High-intensity statin therapy is recommended to reduce LDL-C by >= 50%. If LDL-C remains >= 70 mg/dL on maximally tolerated statin, consider adding ezetimibe or a PCSK9 inhibitor."
+        statin_rec = (
+            "High-intensity statin therapy is recommended to reduce LDL-C by >= 50%. "
+            "If LDL-C remains >= 70 mg/dL on maximally tolerated statin, consider "
+            "adding ezetimibe or a PCSK9 inhibitor."
+        )
         lifestyle_rec = "Aggressive lifestyle modifications alongside pharmacotherapy."
-        additional = "Consider aspirin 75-100 mg/day for adults 40-70 without increased bleeding risk (shared decision-making). Optimise blood pressure to < 130/80 mmHg."
+        additional = (
+            "Consider aspirin 75-100 mg/day for adults 40-70 without increased bleeding "
+            "risk (shared decision-making). Optimise blood pressure to < 130/80 mmHg."
+        )
 
     return {
         "status": "success",
@@ -368,10 +383,10 @@ def _detect_smoking(entries: list) -> bool:
     # LOINC 72166-2 = Tobacco smoking status
     smoking_codes = {"72166-2"}
     current_smoker_snomedcts = {
-        "449868002",  # Current every day smoker
-        "428041000124106",  # Current some day smoker
-        "77176002",   # Smoker (finding)
-        "428071000124103",  # Heavy tobacco smoker
+        "449868002",      # Current every day smoker
+        "428041000124106", # Current some day smoker
+        "77176002",       # Smoker (finding)
+        "428071000124103", # Heavy tobacco smoker
     }
     for entry in entries:
         res = entry.get("resource", {})

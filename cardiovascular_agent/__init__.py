@@ -1,21 +1,14 @@
 """
-cardiovascular_agent — Cardiovascular risk assessment assistant.
+cardiovascular_agent — Cardiovascular risk assessment agent package.
 
-Package initialisation order:
-  1. Load .env so every subsequent import sees the right environment variables.
-  2. Suppress ADK [EXPERIMENTAL] warnings (noise during normal operation).
-  3. Configure the package-wide ANSI logger.
-  4. Import root_agent so the ADK CLI / web UI can discover it.
+Bootstraps logging and re-exports root_agent for ADK discovery.
 """
 import warnings
 
-from dotenv import load_dotenv
-
-load_dotenv()
-
+# Suppress noisy gRPC/protobuf deprecation warnings during startup.
 warnings.filterwarnings(
     "ignore",
-    message=r".*\[EXPERIMENTAL\].*",
+    message=".*deprecated.*",
     category=UserWarning,
 )
 
